@@ -1,0 +1,13 @@
+:root{
+    --primary-color:#E26EE5;
+    --dark-color:#172554;
+    --light-color:#F3F8FF;
+  }
+  
+  body{
+    height: 100%;
+    background: var(--dark-color)
+  }
+
+  
+  
