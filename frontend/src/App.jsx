@@ -42,7 +42,7 @@
 //   const router = createBrowserRouter([
 //     {
 //       path: '/',
-//       element: <MainPage/> 
+//       element: <MainPage/>
 //     },
 //     {
 //       path: '/start',
@@ -50,11 +50,11 @@
 //     },
 //     {
 //       path: '/quiz/:category',
-//       element: <Quiz/> 
+//       element: <Quiz/>
 //     },
 //     {
 //       path: '/result',
-//       element: <Result/> 
+//       element: <Result/>
 //     },
 //     {
 //       path: '/about',
@@ -62,7 +62,7 @@
 //     },
 //     {
 //       path: '/contact',
-//       element: <Contact/> 
+//       element: <Contact/>
 //     },
 //   ]);
 
@@ -76,9 +76,9 @@
 
 // export default App;
 import React from "react";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
 import Start from "./modules/start/Start";
-import { Quiz } from "./modules/quiz/Quiz";
+import Quiz from "./modules/quiz/Quiz";
 import { Result } from "./modules/result/Result";
 import { UserProvider } from "./modules/user/User";
 import MainPage from "./modules/mainpage/MainPage";
