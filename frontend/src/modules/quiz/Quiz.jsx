@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Question } from "./Question";
 import { useUser } from "../user/User";
 import { Timer } from "lucide-react";
+import axios from "axios";
 
 export const Quiz = () => {
   const { category } = useParams();
@@ -10,149 +11,173 @@ export const Quiz = () => {
   const [quizData, setQuizData] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const navigate = useNavigate();
-  const { userAnswers, updateUserAnswers, userData, updateUserData } =
-    useUser();
-  console.log(userAnswers, "uSERAnswersa dmnfbsjkd");
+  const { userAnswers, updateUserAnswers, userData, updateUserData } = useUser();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:4444/view-Questions");
-        console.log("response ", response);
-        const result = await response.json();
-        console.log("response ", result);
-        const categoryData = result.filter(
-          (item) => item.category === category
-        );
-        console.log("Loaded quiz data:", categoryData);
-        setQuizData(result);
-        setTimeLeft(result.length * 60);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+ useEffect(() => {
+  async function fetchData() {
+    try {
+      const response = await fetch("http://localhost:4444/view-Questions");
+      const result = await response.json();
+      
+      console.log("All questions received:", result);
+      console.log("Total questions:", result.length);
+      console.log("Categories in data:", [...new Set(result.map(q => q.category))]);
+      console.log("Looking for category:", category);
+      
+      const categoryData = result.filter((item) =>
+        item.category?.toLowerCase() === category?.toLowerCase()
+      );
+      
+      console.log("Filtered questions for category:", categoryData);
+      console.log("Filtered questions count:", categoryData.length);
+      
+      setQuizData(categoryData);
+      setTimeLeft(categoryData.length * 60);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-    fetchData();
-  }, []);
+  }
+  fetchData();
+}, [category]);
 
   useEffect(() => {
+    if (quizData.length === 0) return;
     if (timeLeft <= 0) {
-      // handleSubmit();
+      handleSubmit();
       return;
     }
 
     const timer = setInterval(() => {
-      setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, quizData]);
 
-  function onNext() {
-    if (currInd < quizData.length - 1) {
-      setInd(currInd + 1);
-    }
-  }
+  const onNext = () => {
+    if (currInd < quizData.length - 1) setInd(currInd + 1);
+  };
 
-  function onPrev() {
-    if (currInd > 0) {
-      setInd(currInd - 1);
-    }
-  }
+  const onPrev = () => {
+    if (currInd > 0) setInd(currInd - 1);
+  };
 
-  function onAnswerChange(e) {
+  const onAnswerChange = (e) => {
     updateUserAnswers(currInd, e.target.value);
-    console.log(userAnswers, "shjagdaslidjasukdhss");
-  }
+  };
 
-  function handleSubmit() {
-    console.log(quizData, userAnswers, "lsjdvjhjhsbasjhasjd");
-    const score = Object.keys(userAnswers).reduce((score, index) => {
-      if (quizData[index].answer === userAnswers[index]) {
-        score += 10;
-      } else {
-        score -= 5;
+  const handleSubmit = async () => {
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    Object.keys(userAnswers).forEach((index) => {
+      const i = parseInt(index);
+      if (userAnswers[i] && quizData[i]) {
+        attemptedCount++;
+        if (quizData[i].answer === userAnswers[i]) correctCount++;
       }
-      return score;
-    }, 0);
+    });
+
+    const score = correctCount * 10 - (attemptedCount - correctCount) * 5;
+    const passingScore = Math.ceil(quizData.length * 0.5) * 10;
 
     const userResultData = {
       ...userData,
       category,
-      attempts: Object.keys(userAnswers).length,
-      score,
+      attempts: attemptedCount,
+      score: Math.max(0, score),
       totalQuestions: quizData.length,
-      status: score >= quizData.length * 5 ? "Passed" : "Failed",
+      correctAnswers: correctCount,
+      incorrectAnswers: attemptedCount - correctCount,
+      status: score >= passingScore ? "Passed" : "Failed",
     };
 
-    console.log("User result data:", userResultData);
     updateUserData(userResultData);
+
+    try {
+      await axios.post("http://localhost:4444/save-result", {
+        username: userData.username || "Anonymous",
+        score: userResultData.score,
+        attempts: userResultData.attempts,
+        status: userResultData.status,
+        category,
+      });
+    } catch (error) {
+      console.error("Error saving result:", error.message);
+    }
+
     navigate("/result");
-  }
+  };
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const formattedTime = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
 
+  if (quizData.length === 0) {
+    return (
+      <div className="mx-auto my-10 p-6 bg-gray-900 text-white text-center rounded-xl shadow-lg max-w-3xl">
+        <h1 className="text-3xl font-bold mb-4 animate-pulse">Loading {category} Quiz...</h1>
+        <p className="text-gray-400">Please ensure the backend is running and this category has questions.</p>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="mx-auto my-10 p-4 sm:p-8 bg-gray-800 rounded-lg"
-      style={{ maxWidth: "90%", minHeight: "90vh" }}
-    >
-      <h1 className="text-2xl sm:text-3xl text-center w-full sm:w-1/2 mx-auto font-bold border-4 text-white rounded-lg p-4 mb-4">
+    <div className="mx-auto my-10 p-6 sm:p-10 bg-gray-900 rounded-2xl shadow-2xl max-w-4xl">
+      <h1 className="text-3xl sm:text-4xl text-center font-extrabold bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-transparent bg-clip-text mb-8">
         {category} Quiz
       </h1>
-      <div className="flex items-center justify-center my-4 text-xl mb-4 text-white">
-        <Timer className="w-6 h-6 text-blue-400 mr-2" />
-        <span>Time Left: {formattedTime}</span>
+
+      <div className="flex items-center justify-center text-white text-lg mb-6">
+        <Timer className="w-6 h-6 text-yellow-300 mr-2 animate-pulse" />
+        <span className="font-semibold">Time Left: {formattedTime}</span>
       </div>
-      <div className="mx-auto max-w-xl">
-        <div>
-          {console.log(quizData, "sdfsdgjuhas")}
-          {quizData[currInd] && (
-            <Question
-              question={quizData[currInd]}
-              onAnswerChange={onAnswerChange}
-            />
-          )}
-        </div>
+
+      <div className="max-w-2xl mx-auto">
+        <Question question={quizData[currInd]} onAnswerChange={onAnswerChange} />
       </div>
-      <div className="mt-8 sm:mt-12">
-        <div className="flex justify-center items-center mb-4">
-          <div className="bg-gray-600 h-2 w-4/5 rounded-full overflow-hidden">
+
+      <div className="mt-10">
+        <div className="flex justify-center items-center mb-6">
+          <div className="w-4/5 bg-gray-700 h-3 rounded-full overflow-hidden">
             <div
-              className="bg-blue-500 h-full rounded-full"
+              className="bg-gradient-to-r from-green-400 to-blue-500 h-full transition-all duration-300"
               style={{ width: `${((currInd + 1) / quizData.length) * 100}%` }}
-            ></div>
+            />
           </div>
         </div>
-        <div className="flex justify-between items-center mt-8 space-x-4">
+
+        <div className="flex justify-between items-center mt-6 space-x-4">
           {currInd > 0 && (
             <button
-              className="bg-green-500 text-black py-2 px-4 sm:px-6 rounded-md text-base sm:text-lg hover:bg-green-800 transition-colors"
               onClick={onPrev}
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-full font-medium transition-transform duration-200 hover:scale-105"
             >
               Prev
             </button>
           )}
+
           {currInd === quizData.length - 1 ? (
             <button
-              className="bg-blue-500 text-white py-2 px-4 sm:px-6 rounded-md text-base sm:text-lg hover:bg-blue-800 transition-colors"
               onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-full font-medium transition-transform duration-200 hover:scale-105"
             >
               Submit
             </button>
           ) : (
             <button
-              className="bg-green-500 text-black py-2 px-4 sm:px-6 rounded-md text-base sm:text-lg hover:bg-green-800 transition-colors"
               onClick={onNext}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black py-2 px-6 rounded-full font-medium transition-transform duration-200 hover:scale-105"
             >
               Next
             </button>
           )}
         </div>
-        <div className="text-white text-center mt-4">
-          Question {currInd + 1} of {quizData.length}
-        </div>
+
+        <p className="text-white text-center mt-4">
+          Question <span className="font-semibold">{currInd + 1}</span> of{" "}
+          <span className="font-semibold">{quizData.length}</span>
+        </p>
       </div>
     </div>
   );

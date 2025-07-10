@@ -1,58 +1,4 @@
-// // export default Start
-// import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom';
-// import { useUser } from '../user/User';
-
-// const Start = () => {
-//   const [username, setUserName] = useState('');
-//   const navigate = useNavigate();
-//   const { updateUserData } = useUser();
-
-//   function handleStart() {
-//     if (username.trim()) {
-//       updateUserData({ username });
-//       navigate('/quiz');
-//     }
-//   }
-
-//   return (
-//     <div className='p-4 sm:p-8'>
-//       <h1 className='text-2xl sm:text-3xl font-bold bg-indigo-500 text-center text-white mb-6 py-2 w-full sm:w-3/4 lg:w-1/2 mx-auto rounded-md border-2'>
-//         Quiz Instructions
-//       </h1>
-//       <ol className='list-decimal list-inside sm:space-y-3 text-sm sm:text-lg text-gray-50 mx-auto w-full sm:w-3/4 lg:w-1/2'>
-//         <li>You will be asked 10 questions one after another.</li>
-//         <li>10 points are awarded for the correct answer.</li>
-//         <li>There is negative marking of 5 points for each incorrect answer.</li>
-//         <li>You will be allotted 10 minutes to finish the Quiz</li>
-//         <li>Each question has four options. You can choose only one option.</li>
-//         <li>You can review and change answers before the quiz finishes.</li>
-//         <li>The result will be declared at the end of the quiz.</li>
-//       </ol>
-//       <div className='flex flex-col items-center mt-10'>
-//         <input
-//           type='text'
-//           value={username}
-//           onChange={(evn) => setUserName(evn.target.value)}
-//           placeholder='Enter your Username'
-//           className='py-2 px-4 w-full sm:w-1/2 lg:w-1/3 rounded-md border border-gray-300'
-//         />
-//         <button
-//           className='bg-purple-700 text-white py-2 px-6 rounded-md text-lg mt-4 hover:bg-purple-900 transition-colors'
-//           onClick={handleStart}
-//         >
-//           Start Quiz
-//         </button>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Start
-
-
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../user/User';
 
@@ -63,43 +9,46 @@ const Start = () => {
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
 
-  function handleStart() {
+  const handleStart = () => {
     if (username.trim()) {
-      console.log('Starting quiz with category:', category);
       updateUserData({ username });
       navigate(`/quiz/${category}`);
     }
-  }
-  
+  };
 
   return (
-    <div className='p-4 sm:p-8'>
-      <h1 className='text-2xl sm:text-3xl font-bold bg-indigo-500 text-center text-white mb-6 py-2 w-full sm:w-3/4 lg:w-1/2 mx-auto rounded-md border-2'>
-        Quiz Instructions
-      </h1>
-      <ol className='list-decimal list-inside sm:space-y-3 text-sm sm:text-lg text-gray-50 mx-auto w-full sm:w-3/4 lg:w-1/2'>
-        <li>You will be asked 10 questions one after another.</li>
-        <li>10 points are awarded for the correct answer.</li>
-        <li>There is negative marking of 5 points for each incorrect answer.</li>
-        <li>You will be allotted 10 minutes to finish the Quiz</li>
-        <li>Each question has four options. You can choose only one option.</li>
-        <li>You can review and change answers before the quiz finishes.</li>
-        <li>The result will be declared at the end of the quiz.</li>
-      </ol>
-      <div className='flex flex-col items-center mt-10'>
-        <input
-          type='text'
-          value={username}
-          onChange={(evn) => setUserName(evn.target.value)}
-          placeholder='Enter your Username'
-          className='py-2 px-4 w-full sm:w-1/2 lg:w-1/3 rounded-md border border-gray-300'
-        />
-        <button
-          className='bg-purple-700 text-white py-2 px-6 rounded-md text-lg mt-4 hover:bg-purple-900 transition-colors'
-          onClick={handleStart}
-        >
-          Start Quiz
-        </button>
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-8 bg-gradient-to-r from-gray-900 via-purple-900 to-black">
+      <div className="w-full max-w-3xl bg-gray-800 text-white rounded-2xl shadow-2xl p-8">
+        <h1 className="text-4xl font-extrabold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+          Quiz Instructions
+        </h1>
+
+        <ol className="list-decimal list-inside space-y-3 text-lg text-gray-300 mb-8 px-4">
+          <li>You will be asked 10 questions one after another.</li>
+          <li>10 points are awarded for each correct answer.</li>
+          <li>Negative marking of 5 points for each incorrect answer.</li>
+          <li>You have 10 minutes to complete the quiz.</li>
+          <li>Each question has four options. Only one can be selected.</li>
+          <li>You can review and change answers before submission.</li>
+          <li>Your result will be shown at the end of the quiz.</li>
+        </ol>
+
+        <div className="flex flex-col items-center">
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Enter your username"
+            className="w-full sm:w-2/3 lg:w-1/2 px-4 py-3 rounded-lg border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4"
+          />
+
+          <button
+            onClick={handleStart}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg px-6 py-3 rounded-lg shadow-md transition-transform transform hover:scale-105"
+          >
+            Start Quiz
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,33 @@
-import React from 'react';
+import { Sparkles } from "lucide-react";
 
 const About = () => {
   return (
-    <div className="container mx-auto p-4 sm:p-8">
-      <h1 className="text-3xl font-bold mb-4 text-center">About QuizApp</h1>
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <p className="text-gray-300 mb-4">
-          Welcome to QuizApp, the ultimate platform to test and enhance your knowledge through engaging quizzes. Our app offers a variety of quizzes that cater to different subjects and skill levels.
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6 sm:p-12">
+      <div className="max-w-4xl mx-auto bg-gray-900 shadow-2xl rounded-2xl p-8 sm:p-12 border border-gray-700">
+        <div className="flex items-center justify-center mb-6">
+          <Sparkles className="text-yellow-400 w-8 h-8 mr-2 animate-pulse" />
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white text-center">
+            About <span className="text-yellow-400">QuizApp</span>
+          </h1>
+        </div>
+
+        <p className="text-gray-300 text-lg leading-relaxed mb-6">
+          Welcome to <span className="text-yellow-400 font-semibold">QuizApp</span> — your go-to platform to challenge and grow your skills through fun, interactive, and educational quizzes. Designed for learners of all levels, our quizzes keep you sharp while making learning engaging.
         </p>
-        <p className="text-gray-300 mb-4">
-          Whether you are preparing for an interview, looking to improve your coding skills, or simply enjoying some fun aptitude challenges, QuizApp has something for you. Our quizzes are designed to provide a comprehensive learning experience with immediate feedback and detailed explanations.
+
+        <p className="text-gray-300 text-lg leading-relaxed mb-6">
+          Whether you're prepping for your dream job interview, improving your coding logic, or sharpening your brain with aptitude puzzles — QuizApp is your companion for success. Expect speed, challenge, and clarity — all in one place.
         </p>
-        <p className="text-gray-300">
-          Key Features:
-          <ul className="list-disc list-inside ml-4 mt-2">
-            <li>Wide range of quiz categories including Aptitude, Coding, and Interview.</li>
-            <li>Timed quizzes with score tracking.</li>
-            <li>Instant feedback on answers.</li>
-            <li>Detailed explanations for each question.</li>
+
+        <div className="bg-gray-800 border-l-4 border-yellow-400 p-6 rounded-lg">
+          <h2 className="text-xl text-white font-semibold mb-4">🔥 Key Features</h2>
+          <ul className="list-disc list-inside text-gray-300 space-y-2">
+            <li>🎯 <span className="text-white font-medium">Diverse Categories:</span> Aptitude, Coding, Interview & more.</li>
+            <li>⏱️ <span className="text-white font-medium">Timed Quizzes:</span> Practice under pressure with real-time timers.</li>
+            <li>⚡ <span className="text-white font-medium">Instant Feedback:</span> Know where you stand instantly after each question.</li>
+            <li>📚 <span className="text-white font-medium">Detailed Explanations:</span> Understand the “why” behind every answer.</li>
           </ul>
-        </p>
+        </div>
       </div>
     </div>
   );

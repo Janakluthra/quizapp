@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 
@@ -14,7 +14,9 @@ const NavBar = () => {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <img src={logo} alt="QuizApp Logo" className="h-10 w-10 mr-3" />
-          <span className="text-white text-2xl font-bold">QuizApp</span>
+          <span className="text-2xl sm:text-3xl font-extrabold text-white tracking-wide">
+            Quiz<span className="text-yellow-400">App</span>
+          </span>
         </div>
         <div className="block lg:hidden">
           <button
