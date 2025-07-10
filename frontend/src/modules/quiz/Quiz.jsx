@@ -16,7 +16,7 @@ export const Quiz = () => {
  useEffect(() => {
   async function fetchData() {
     try {
-      const response = await fetch("http://localhost:4444/view-Questions");
+      const response = await fetch(import.meta.env.VITE_QUESTIONS_URL);
       const result = await response.json();
       
       console.log("All questions received:", result);
@@ -95,7 +95,7 @@ export const Quiz = () => {
     updateUserData(userResultData);
 
     try {
-      await axios.post("http://localhost:4444/save-result", {
+      await axios.post(import.meta.env.VITE_SAVE_URL, {
         username: userData.username || "Anonymous",
         score: userResultData.score,
         attempts: userResultData.attempts,
