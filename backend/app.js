@@ -8,8 +8,17 @@ import { resultRoutes } from "./modules/routes/result-routes.js";
 
 const app = express();
 dotenv.config();
+
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://quiz-app-sigma-one-61.vercel.app"
+];
+
+app.use(cors({
+  origin: allowedOrigins
+}));
+
 
 
 app.use("/", questionRoutes);
@@ -41,12 +50,13 @@ app.post("/", async (req, res) => {
 });
 
 const promise = createConnection();
-promise.then((r) => {
-  app.listen(4444, (err) => {
+promise.then(() => {
+  const PORT = process.env.PORT || 4444; 
+  app.listen(PORT, (err) => {
     if (err) {
       console.log("application is not running");
     } else {
-      console.log("application is running");
+      console.log(`application is running on port ${PORT}`);
     }
   });
 });
