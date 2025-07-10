@@ -15,9 +15,22 @@ const allowedOrigins = [
   "https://quiz-app-sigma-one-61.vercel.app"
 ];
 
-app.use(cors({
-  origin: allowedOrigins
-}));
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (
+      !origin || 
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/quiz-app-git-[\w-]+\.vercel\.app$/.test(origin)
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 
 
 
