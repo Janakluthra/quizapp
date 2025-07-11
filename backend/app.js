@@ -12,7 +12,7 @@ dotenv.config();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://quiz-app-sigma-one-61.vercel.app"
+  "https://quizapp-tau-eight.vercel.app/"
 ];
 
 
